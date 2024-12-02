@@ -1,0 +1,18 @@
+HangmanGame/
+├── src/
+│   ├── dao/
+│   │   ├── WordDAO.java
+│   │   ├── PlayerDAO.java
+│   ├── model/
+│   │   ├── Word.java
+│   │   ├── Player.java
+│   ├── service/
+│   │   ├── HangmanService.java
+│   ├── ui/
+│   │   ├── HangmanGame.java
+│   ├── utils/
+│   │   ├── DatabaseConnection.java
+├── resources/
+│   ├── db.sql
+├── pom.xml (for Maven projects, if used)
+└── README.md
