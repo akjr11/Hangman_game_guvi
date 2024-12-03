@@ -1,0 +1,25 @@
+package dao;
+
+import model.Player;
+import utils.DatabaseConnection;
+
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
+
+public class PlayerDAO {
+    public void addPlayer(Player player) {
+        String query = "INSERT INTO players (name, games_played, games_won) VALUES (?, ?, ?)";
+
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(query)) {
+
+            pstmt.setString(1, player.getName());
+            pstmt.setInt(2, player.getGamesPlayed());
+            pstmt.setInt(3, player.getGamesWon());
+            pstmt.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+}
