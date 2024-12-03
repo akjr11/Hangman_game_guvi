@@ -1,0 +1,28 @@
+package dao;
+
+import model.Word;
+import utils.DatabaseConnection;
+
+import java.sql.*;
+import java.util.ArrayList;
+import java.util.List;
+
+public class WordDAO {
+    public List<Word> getAllWords() {
+        List<Word> words = new ArrayList<>();
+        String query = "SELECT * FROM words";
+
+        try (Connection conn = DatabaseConnection.getConnection();
+             Statement stmt = conn.createStatement();
+             ResultSet rs = stmt.executeQuery(query)) {
+
+            while (rs.next()) {
+                words.add(new Word(rs.getInt("id"), rs.getString("word"), rs.getString("hint")));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return words;
+    }
+}
