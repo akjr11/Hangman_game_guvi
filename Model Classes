@@ -1,0 +1,138 @@
+#Word
+package model;
+
+public class Word {
+    private int id;
+    private String word;
+    private String hint;
+
+    public Word(int id, String word, String hint) {
+        this.id = id;
+        this.word = word;
+        this.hint = hint;
+    }
+
+    public String getWord() {
+        return word;
+    }
+
+    public String getHint() {
+        return hint;
+    }
+}
+
+#Player
+package model;
+
+public class Player {
+    private int id;
+    private String name;
+    private int gamesPlayed;
+    private int gamesWon;
+
+    public Player(String name) {
+        this.name = name;
+        this.gamesPlayed = 0;
+        this.gamesWon = 0;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public int getGamesPlayed() {
+        return gamesPlayed;
+    }
+
+    public int getGamesWon() {
+        return gamesWon;
+    }
+
+    public void incrementGamesPlayed() {
+        gamesPlayed++;
+    }
+
+    public void incrementGamesWon() {
+        gamesWon++;
+    }
+}
+
+#Game Logic Service
+package service;
+
+import dao.WordDAO;
+import model.Word;
+
+import java.util.List;
+import java.util.Random;
+
+public class HangmanService {
+    private WordDAO wordDAO = new WordDAO();
+
+    public Word getRandomWord() {
+        List<Word> words = wordDAO.getAllWords();
+        Random random = new Random();
+        return words.get(random.nextInt(words.size()));
+    }
+
+    public boolean isGuessCorrect(String word, char guess) {
+        return word.indexOf(guess) != -1;
+    }
+}
+
+#UI Logic 
+package ui;
+
+import model.Word;
+import service.HangmanService;
+
+import java.util.Scanner;
+
+public class HangmanGame {
+    public static void main(String[] args) {
+        HangmanService hangmanService = new HangmanService();
+        Scanner scanner = new Scanner(System.in);
+
+        Word word = hangmanService.getRandomWord();
+        String chosenWord = word.getWord();
+        String hint = word.getHint();
+
+        System.out.println("Hint: " + hint);
+
+        char[] guessedWord = new char[chosenWord.length()];
+        for (int i = 0; i < guessedWord.length; i++) {
+            guessedWord[i] = '_';
+        }
+
+        int attempts = 6;
+
+        while (attempts > 0) {
+            System.out.println("Word: " + String.valueOf(guessedWord));
+            System.out.println("Attempts left: " + attempts);
+            System.out.print("Enter your guess: ");
+            char guess = scanner.next().charAt(0);
+
+            if (hangmanService.isGuessCorrect(chosenWord, guess)) {
+                for (int i = 0; i < chosenWord.length(); i++) {
+                    if (chosenWord.charAt(i) == guess) {
+                        guessedWord[i] = guess;
+                    }
+                }
+
+                if (String.valueOf(guessedWord).equals(chosenWord)) {
+                    System.out.println("Congratulations! You guessed the word: " + chosenWord);
+                    break;
+                }
+            } else {
+                attempts--;
+                System.out.println("Incorrect guess!");
+            }
+        }
+
+        if (attempts == 0) {
+            System.out.println("You lost! The word was: " + chosenWord);
+        }
+
+        scanner.close();
+    }
+}
